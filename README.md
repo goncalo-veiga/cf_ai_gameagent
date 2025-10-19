@@ -1,12 +1,12 @@
-# 🤖 Chat Agent Starter Kit
+# 🤖 Chat GameAgent
 
 ![npm i agents command](./npm-agents-banner.svg)
 
 <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/agents-starter"><img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare"/></a>
 
-A starter template for building AI-powered chat agents using Cloudflare's Agent platform, powered by [`agents`](https://www.npmjs.com/package/agents). This project provides a foundation for creating interactive chat experiences with AI, complete with a modern UI and tool integration capabilities.
+Built from a starter template for building AI-powered chat agents using Cloudflare's Agent platform, powered by [`agents`](https://www.npmjs.com/package/agents). This project provides an interactive chat with the ability to give information about video games.
 
-## Features
+## Base Features
 
 - 💬 Interactive chat interface with AI
 - 🛠️ Built-in tool system with human-in-the-loop confirmation
@@ -16,26 +16,26 @@ A starter template for building AI-powered chat agents using Cloudflare's Agent 
 - 🔄 State management and chat history
 - 🎨 Modern, responsive UI
 
+## GameAgent Features
+
+- Provides the genres of a given video game
+- Give a summary of the game
+- Tells you who are the developers
+
 ## Prerequisites
 
-- Cloudflare account
-- OpenAI API key
+- Gemini or OpenAI API key
+- Cloudflare account (only for deployment)
 
 ## Quick Start
 
-1. Create a new project:
-
-```bash
-npx create-cloudflare@latest --template cloudflare/agents-starter
-```
-
-2. Install dependencies:
+1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Set up your environment:
+2. Set up your environment:
 
 Create a `.dev.vars` file:
 
@@ -49,13 +49,13 @@ or
 OPENAI_API_KEY=your_openai_api_key
 ```
 
-4. Run locally:
+3. Run locally:
 
 ```bash
 npm start
 ```
 
-5. Deploy:
+4. Deploy:
 
 ```bash
 npm run deploy
@@ -72,69 +72,6 @@ npm run deploy
 │   └── styles.css     # UI styling
 ```
 
-## Customization Guide
-
-### Adding New Tools
-
-Add new tools in `tools.ts` using the tool builder:
-
-```ts
-// Example of a tool that requires confirmation
-const searchDatabase = tool({
-  description: "Search the database for user records",
-  parameters: z.object({
-    query: z.string(),
-    limit: z.number().optional()
-  })
-  // No execute function = requires confirmation
-});
-
-// Example of an auto-executing tool
-const getCurrentTime = tool({
-  description: "Get current server time",
-  parameters: z.object({}),
-  execute: async () => new Date().toISOString()
-});
-
-// Scheduling tool implementation
-const scheduleTask = tool({
-  description:
-    "schedule a task to be executed at a later time. 'when' can be a date, a delay in seconds, or a cron pattern.",
-  parameters: z.object({
-    type: z.enum(["scheduled", "delayed", "cron"]),
-    when: z.union([z.number(), z.string()]),
-    payload: z.string()
-  }),
-  execute: async ({ type, when, payload }) => {
-    // ... see the implementation in tools.ts
-  }
-});
-```
-
-To handle tool confirmations, add execution functions to the `executions` object:
-
-```typescript
-export const executions = {
-  searchDatabase: async ({
-    query,
-    limit
-  }: {
-    query: string;
-    limit?: number;
-  }) => {
-    // Implementation for when the tool is confirmed
-    const results = await db.search(query, limit);
-    return results;
-  }
-  // Add more execution handlers for other tools that require confirmation
-};
-```
-
-Tools can be configured in two ways:
-
-1. With an `execute` function for automatic execution
-2. Without an `execute` function, requiring confirmation and using the `executions` object to handle the confirmed action. NOTE: The keys in `executions` should match `toolsRequiringConfirmation` in `app.tsx`.
-
 ### Use a different AI model provider
 
 The starting [`server.ts`](https://github.com/cloudflare/agents-starter/blob/main/src/server.ts) implementation uses the [`ai-sdk`](https://sdk.vercel.ai/docs/introduction) and the [OpenAI provider](https://sdk.vercel.ai/providers/ai-sdk-providers/openai), but you can use any AI model provider by:
@@ -147,16 +84,6 @@ For example, to use the [`workers-ai-provider`](https://sdk.vercel.ai/providers/
 
 ```sh
 npm install workers-ai-provider
-```
-
-Add an `ai` binding to `wrangler.jsonc`:
-
-```jsonc
-// rest of file
-  "ai": {
-    "binding": "AI"
-  }
-// rest of file
 ```
 
 Replace the `@ai-sdk/openai` import and usage with the `workers-ai-provider`:
@@ -178,60 +105,6 @@ Replace the `@ai-sdk/openai` import and usage with the `workers-ai-provider`:
 
 Commit your changes and then run the `agents-starter` as per the rest of this README.
 
-### Modifying the UI
-
-The chat interface is built with React and can be customized in `app.tsx`:
-
-- Modify the theme colors in `styles.css`
-- Add new UI components in the chat container
-- Customize message rendering and tool confirmation dialogs
-- Add new controls to the header
-
-### Example Use Cases
-
-1. **Customer Support Agent**
-   - Add tools for:
-     - Ticket creation/lookup
-     - Order status checking
-     - Product recommendations
-     - FAQ database search
-
-2. **Development Assistant**
-   - Integrate tools for:
-     - Code linting
-     - Git operations
-     - Documentation search
-     - Dependency checking
-
-3. **Data Analysis Assistant**
-   - Build tools for:
-     - Database querying
-     - Data visualization
-     - Statistical analysis
-     - Report generation
-
-4. **Personal Productivity Assistant**
-   - Implement tools for:
-     - Task scheduling with flexible timing options
-     - One-time, delayed, and recurring task management
-     - Task tracking with reminders
-     - Email drafting
-     - Note taking
-
-5. **Scheduling Assistant**
-   - Build tools for:
-     - One-time event scheduling using specific dates
-     - Delayed task execution (e.g., "remind me in 30 minutes")
-     - Recurring tasks using cron patterns
-     - Task payload management
-     - Flexible scheduling patterns
-
-Each use case can be implemented by:
-
-1. Adding relevant tools in `tools.ts`
-2. Customizing the UI for specific interactions
-3. Extending the agent's capabilities in `server.ts`
-4. Adding any necessary external API integrations
 
 ## Learn More
 
