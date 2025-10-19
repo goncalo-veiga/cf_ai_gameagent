@@ -40,6 +40,12 @@ npm install
 Create a `.dev.vars` file:
 
 ```env
+GOOGLE_GENERATIVE_AI_API_KEY=your_googleai_api_key
+```
+
+or
+
+```env
 OPENAI_API_KEY=your_openai_api_key
 ```
 

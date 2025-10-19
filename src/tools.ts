@@ -9,30 +9,6 @@ import type { Chat } from "./server";
 import { getCurrentAgent } from "agents";
 import { scheduleSchema } from "agents/schedule";
 
-/**
- * Weather information tool that requires human confirmation
- * When invoked, this will present a confirmation dialog to the user
- */
-const getWeatherInformation = tool({
-  description: "show the weather in a given city to the user",
-  inputSchema: z.object({ city: z.string() })
-  // Omitting execute function makes this tool require human confirmation
-});
-
-/**
- * Local time tool that executes automatically
- * Since it includes an execute function, it will run without user confirmation
- * This is suitable for low-risk operations that don't need oversight
- */
-const getLocalTime = tool({
-  description: "get the local time for a specified location",
-  inputSchema: z.object({ location: z.string() }),
-  execute: async ({ location }) => {
-    console.log(`Getting local time for ${location}`);
-    return "10am";
-  }
-});
-
 const scheduleTask = tool({
   description: "A tool to schedule a task to be executed at a later time",
   inputSchema: scheduleSchema,
@@ -109,12 +85,246 @@ const cancelScheduledTask = tool({
 });
 
 /**
+ * Tool to get the genres of a given video game using public data
+ * This executes automatically (no confirmation required)
+ */
+const getGameGenres = tool({
+  description: "Get the genres of a given video game using public Wikipedia data.",
+  inputSchema: z.object({
+    name: z.string().describe("The name of the video game to find genres for"),
+  }),
+  execute: async ({ name }) => {
+    console.log(`Fetching genres for game: ${name}`);
+
+    try {
+      const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
+        name
+      )}&utf8=&format=json`;
+
+      const searchRes = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
+          name + " video game"
+        )}&utf8=&format=json`,
+        {
+          headers: {
+            "User-Agent": "CloudflareAgentDemo/1.0",
+            Accept: "application/json",
+          },
+        }
+      );
+
+      const searchData = (await searchRes.json()) as {
+        query?: {
+          search?: { title: string }[];
+        };
+      };
+
+      if (!searchData.query?.search?.length) {
+        return `No Wikipedia page found for "${name}".`;
+      }
+
+      const pageTitle = searchData.query.search[0].title;
+
+      // Summary of the most relevant page
+      const summaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
+        pageTitle
+      )}`;
+      const summaryRes = await fetch(summaryUrl, {
+        headers: {
+          "User-Agent": "CloudflareAgentDemo/1.0 (https://developers.cloudflare.com/)",
+          "Accept": "application/json",
+        },
+      });
+
+      const summaryData = (await summaryRes.json()) as {
+        extract?: string;
+        title?: string;
+      };
+
+      const extract = summaryData.extract || "";
+      const lower = extract.toLowerCase();
+
+      // Detect common genre keywords in the summary text
+      const genreKeywords = [
+        "action",
+        "adventure",
+        "role-playing",
+        "rpg",
+        "shooter",
+        "puzzle",
+        "strategy",
+        "simulation",
+        "sports",
+        "racing",
+        "platform",
+        "horror",
+        "survival",
+        "sandbox",
+        "fighting",
+        "stealth",
+        "visual novel",
+        "mmo",
+        "fps",
+        "tps",
+        "metroidvania",
+      ];
+
+      const genres = genreKeywords.filter((g) => lower.includes(g));
+
+      if (genres.length === 0) {
+        return `Couldn't determine genres for "${pageTitle}". Summary: ${extract.substring(
+          0,
+          200
+        )}...`;
+      }
+
+      return `${pageTitle} belongs to genres: ${genres.join(", ")}.`;
+    } catch (error) {
+      console.error("Error fetching game genres:", error);
+      return `Error fetching game genres: ${error}`;
+    }
+  },
+});
+
+const summarizeGameStory = tool({
+  description: "Summarize the story or plot of a video game using Wikipedia.",
+  inputSchema: z.object({
+    name: z.string().describe("The name of the video game"),
+  }),
+  execute: async ({ name }) => {
+    try {
+      console.log(`Fetching story summary for: ${name}`);
+
+      // Step 1: Search Wikipedia
+      const searchRes = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
+          name + " video game"
+        )}&utf8=&format=json`,
+        {
+          headers: {
+            "User-Agent": "CloudflareAgentDemo/1.0",
+            Accept: "application/json",
+          },
+        }
+      );
+      const searchData = (await searchRes.json()) as {
+        query?: { search?: { title: string }[] };
+      };
+
+      if (!searchData.query?.search?.length) {
+        return `No Wikipedia page found for "${name}".`;
+      }
+
+      const pageTitle = searchData.query.search[0].title;
+
+      // Step 2: Get page summary
+      const summaryRes = await fetch(
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
+          pageTitle
+        )}`,
+        {
+          headers: {
+            "User-Agent": "CloudflareAgentDemo/1.0",
+            Accept: "application/json",
+          },
+        }
+      );
+      const summaryData = (await summaryRes.json()) as { extract?: string };
+
+      const extract = summaryData.extract || "";
+      if (!extract) {
+        return `Could not find a story summary for "${pageTitle}".`;
+      }
+
+      // Step 3: Summarize (first 2 sentences)
+      const sentences = extract.split(". ");
+      const shortSummary = sentences.slice(0, 2).join(". ") + ".";
+      return `Story summary of "${pageTitle}": ${shortSummary}`;
+    } catch (error) {
+      console.error("Error summarizing game story:", error);
+      return `Error summarizing game story: ${error}`;
+    }
+  },
+});
+
+const getDeveloperInfo = tool({
+  description: "Get information about the developer or studio of a video game using Wikipedia.",
+  inputSchema: z.object({
+    name: z.string().describe("The name of the video game"),
+  }),
+  execute: async ({ name }) => {
+    try {
+      console.log(`Fetching developer info for: ${name}`);
+
+      // Step 1: Search Wikipedia
+      const searchRes = await fetch(
+        `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
+          name + " video game"
+        )}&utf8=&format=json`,
+        {
+          headers: {
+            "User-Agent": "CloudflareAgentDemo/1.0",
+            Accept: "application/json",
+          },
+        }
+      );
+      const searchData = (await searchRes.json()) as {
+        query?: { search?: { title: string }[] };
+      };
+
+      if (!searchData.query?.search?.length) {
+        return `No Wikipedia page found for "${name}".`;
+      }
+
+      const pageTitle = searchData.query.search[0].title;
+
+      // Step 2: Get page summary
+      const summaryRes = await fetch(
+        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(
+          pageTitle
+        )}`,
+        {
+          headers: {
+            "User-Agent": "CloudflareAgentDemo/1.0",
+            Accept: "application/json",
+          },
+        }
+      );
+      const summaryData = (await summaryRes.json()) as { extract?: string };
+
+      const extract = summaryData.extract || "";
+      if (!extract) {
+        return `Could not find developer info for "${pageTitle}".`;
+      }
+
+      // Step 3: Try to extract developer info heuristically
+      const developerMatches = extract.match(
+        /developed (?:and published )?by ([^.,;]+)/i
+      );
+      const developer = developerMatches ? developerMatches[1] : "Unknown";
+
+      return `Developer of "${pageTitle}": ${developer}. Summary: ${extract.substring(
+        0,
+        200
+      )}...`;
+    } catch (error) {
+      console.error("Error fetching developer info:", error);
+      return `Error fetching developer info: ${error}`;
+    }
+  },
+});
+
+
+
+
+/**
  * Export all available tools
  * These will be provided to the AI model to describe available capabilities
  */
 export const tools = {
-  getWeatherInformation,
-  getLocalTime,
+  getGameGenres,
+  summarizeGameStory,
+  getDeveloperInfo,
   scheduleTask,
   getScheduledTasks,
   cancelScheduledTask
