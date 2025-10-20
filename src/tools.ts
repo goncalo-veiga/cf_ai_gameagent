@@ -90,9 +90,10 @@ const cancelScheduledTask = tool({
  * Executes automatically (no confirmation required).
  */
 const getGameGenres = tool({
-  description: "Get the genres of a given video game using public Wikipedia data.",
+  description:
+    "Get the genres of a given video game using public Wikipedia data.",
   inputSchema: z.object({
-    name: z.string().describe("The name of the video game to find genres for"),
+    name: z.string().describe("The name of the video game to find genres for")
   }),
   execute: async ({ name }) => {
     console.log(`Fetching genres for game: ${name}`);
@@ -109,8 +110,8 @@ const getGameGenres = tool({
         {
           headers: {
             "User-Agent": "CloudflareAgentDemo/1.0",
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
 
@@ -132,9 +133,10 @@ const getGameGenres = tool({
       )}`;
       const summaryRes = await fetch(summaryUrl, {
         headers: {
-          "User-Agent": "CloudflareAgentDemo/1.0 (https://developers.cloudflare.com/)",
-          "Accept": "application/json",
-        },
+          "User-Agent":
+            "CloudflareAgentDemo/1.0 (https://developers.cloudflare.com/)",
+          Accept: "application/json"
+        }
       });
 
       const summaryData = (await summaryRes.json()) as {
@@ -181,7 +183,7 @@ const getGameGenres = tool({
         "jrpg",
         "party-based",
         "creature colleting",
-        "mystery",
+        "mystery"
       ];
 
       const genres = genreKeywords.filter((g) => lower.includes(g));
@@ -198,9 +200,8 @@ const getGameGenres = tool({
       console.error("Error fetching game genres:", error);
       return `Error fetching game genres: ${error}`;
     }
-  },
+  }
 });
-
 
 /**
  * Tool to summarize the story or plot of a given video game.
@@ -211,7 +212,7 @@ const getGameGenres = tool({
 const summarizeGameStory = tool({
   description: "Summarize the story or plot of a video game using Wikipedia.",
   inputSchema: z.object({
-    name: z.string().describe("The name of the video game"),
+    name: z.string().describe("The name of the video game")
   }),
   execute: async ({ name }) => {
     try {
@@ -225,8 +226,8 @@ const summarizeGameStory = tool({
         {
           headers: {
             "User-Agent": "CloudflareAgentDemo/1.0",
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
       const searchData = (await searchRes.json()) as {
@@ -247,8 +248,8 @@ const summarizeGameStory = tool({
         {
           headers: {
             "User-Agent": "CloudflareAgentDemo/1.0",
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
       const summaryData = (await summaryRes.json()) as { extract?: string };
@@ -266,7 +267,7 @@ const summarizeGameStory = tool({
       console.error("Error summarizing game story:", error);
       return `Error summarizing game story: ${error}`;
     }
-  },
+  }
 });
 
 /**
@@ -275,9 +276,10 @@ const summarizeGameStory = tool({
  * Executes automatically (no confirmation required).
  */
 const getDeveloperInfo = tool({
-  description: "Get information about the developer or studio of a video game using Wikipedia.",
+  description:
+    "Get information about the developer or studio of a video game using Wikipedia.",
   inputSchema: z.object({
-    name: z.string().describe("The name of the video game"),
+    name: z.string().describe("The name of the video game")
   }),
   execute: async ({ name }) => {
     try {
@@ -291,8 +293,8 @@ const getDeveloperInfo = tool({
         {
           headers: {
             "User-Agent": "CloudflareAgentDemo/1.0",
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
       const searchData = (await searchRes.json()) as {
@@ -313,8 +315,8 @@ const getDeveloperInfo = tool({
         {
           headers: {
             "User-Agent": "CloudflareAgentDemo/1.0",
-            Accept: "application/json",
-          },
+            Accept: "application/json"
+          }
         }
       );
       const summaryData = (await summaryRes.json()) as { extract?: string };
@@ -338,11 +340,8 @@ const getDeveloperInfo = tool({
       console.error("Error fetching developer info:", error);
       return `Error fetching developer info: ${error}`;
     }
-  },
+  }
 });
-
-
-
 
 /**
  * Export all available tools

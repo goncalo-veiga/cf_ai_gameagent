@@ -1,10 +1,10 @@
-# 🎮 Chat GameAgent — AI-Powered Video Game Assistant
+# 🎮 Chat GameAgent
 
 <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/agents-starter">
   <img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare"/>
 </a>
 
-**Chat GameAgent** is an AI-powered chat application built with [Cloudflare’s Agent Platform](https://developers.cloudflare.com/agents/), designed to demonstrate how Large Language Models (LLMs), tools, and Cloudflare Workers can work together to create an intelligent, stateful web agent.  
+**Chat GameAgent** is an AI-powered chat application built with [Cloudflare’s Agent Platform](https://developers.cloudflare.com/agents/), designed to demonstrate how Large Language Models (LLMs), tools, and Cloudflare Workers can work together to create an intelligent, stateful web agent.
 
 This project extends the official [`agents-starter`](https://github.com/cloudflare/agents-starter) template, transforming it into an interactive assistant specialized in **video game information retrieval** — capable of identifying genres, summarizing stories, and finding developers of any video game.
 
@@ -19,49 +19,53 @@ GameAgent combines **Cloudflare Workers**, **AI models (Gemini by default)**, an
 ## 🧩 Features
 
 ### 💬 Base Features (from Agents Starter)
-- **Interactive Chat UI** – Real-time AI messaging with tool confirmations  
-- **Human-in-the-loop Tools** – Tools that require user approval before execution  
-- **Task Scheduling** – Schedule, list, and cancel tasks (delayed, one-time, or recurring)  
-- **Persistent Memory** – Retains chat history and context  
-- **Dynamic Theming** – Light/Dark mode  
-- **Real-time Streaming** – Continuous text streaming for LLM responses  
+
+- **Interactive Chat UI** – Real-time AI messaging with tool confirmations
+- **Human-in-the-loop Tools** – Tools that require user approval before execution
+- **Task Scheduling** – Schedule, list, and cancel tasks (delayed, one-time, or recurring)
+- **Persistent Memory** – Retains chat history and context
+- **Dynamic Theming** – Light/Dark mode
+- **Real-time Streaming** – Continuous text streaming for LLM responses
 
 ### 🎮 GameAgent Custom Tools
 
 #### 🧠 `getGameGenres`
+
 > Returns the primary genres of a given video game.
 
 - Uses **Wikipedia’s public API** to fetch the summary and automatically detects common game genres (e.g., "action", "RPG", "shooter", etc.).
 - Example:  
-  **User:** “What are the genres of *Hades*?”  
+  **User:** “What are the genres of _Hades_?”  
   **Agent:** “Hades belongs to the genres action, role-playing, and roguelike.”
 
 #### 📖 `summarizeGameStory`
+
 > Summarizes the story or plot of a given video game.
 
-- Fetches the Wikipedia summary of a video game and returns a short synopsis of its plot or story.  
+- Fetches the Wikipedia summary of a video game and returns a short synopsis of its plot or story.
 - Example:  
-  **User:** “Summarize the story of *Super Mario Odyssey*.”  
+  **User:** “Summarize the story of _Super Mario Odyssey_.”  
   **Agent:** “Super Mario Odyssey is a platform game where Mario and his new ally Cappy journey across kingdoms to save Princess Peach from Bowser's forced marriage plans.”
 
 #### 🏢 `getDeveloperInfo`
+
 > Retrieves the developer or studio information for a video game.
 
 - Finds the game’s Wikipedia page and extracts the developer name using a regex that looks for phrases like “developed by …”.
 - Example:  
-  **User:** “Who developed *Minecraft*?”  
+  **User:** “Who developed _Minecraft_?”  
   **Agent:** “Minecraft was developed by Mojang Studios.”
 
 ---
 
 ## 🧠 Architecture Components
 
-| Component | Description | Cloudflare Integration |
-|------------|-------------|------------------------|
-| **LLM** | Large Language Model used to power chat and reasoning | Gemini 2.0 |
-| **Workflow / Coordination** | Manages agent lifecycle, task scheduling, and workflow logic | Cloudflare **Workers** + **Agents runtime** |
-| **User Input** | Real-time chat interface for conversation or commands | Built with **Cloudflare Pages** and Realtime API |
-| **Memory / State** | Persistent conversation history and scheduled task storage | Backed by **Durable Objects** (via Agents framework) |
+| Component                   | Description                                                  | Cloudflare Integration                               |
+| --------------------------- | ------------------------------------------------------------ | ---------------------------------------------------- |
+| **LLM**                     | Large Language Model used to power chat and reasoning        | Gemini 2.0                                           |
+| **Workflow / Coordination** | Manages agent lifecycle, task scheduling, and workflow logic | Cloudflare **Workers** + **Agents runtime**          |
+| **User Input**              | Real-time chat interface for conversation or commands        | Built with **Cloudflare Pages** and Realtime API     |
+| **Memory / State**          | Persistent conversation history and scheduled task storage   | Backed by **Durable Objects** (via Agents framework) |
 
 ---
 
@@ -142,7 +146,6 @@ Replace the `@ai-sdk/openai` import and usage with the `workers-ai-provider`:
 ```
 
 Commit your changes and then run the `agents-starter` as per the rest of this README.
-
 
 ## Learn More
 
