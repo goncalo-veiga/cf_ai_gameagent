@@ -1,41 +1,79 @@
-# 🤖 Chat GameAgent
+# 🎮 Chat GameAgent — AI-Powered Video Game Assistant
 
-![npm i agents command](./npm-agents-banner.svg)
+<a href="https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/agents-starter">
+  <img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare"/>
+</a>
 
-<a href="https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/agents-starter"><img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare"/></a>
+**Chat GameAgent** is an AI-powered chat application built with [Cloudflare’s Agent Platform](https://developers.cloudflare.com/agents/), designed to demonstrate how Large Language Models (LLMs), tools, and Cloudflare Workers can work together to create an intelligent, stateful web agent.  
 
-Built from a starter template for building AI-powered chat agents using Cloudflare's Agent platform, powered by [`agents`](https://www.npmjs.com/package/agents). This project provides an interactive chat with the ability to give information about video games.
+This project extends the official [`agents-starter`](https://github.com/cloudflare/agents-starter) template, transforming it into an interactive assistant specialized in **video game information retrieval** — capable of identifying genres, summarizing stories, and finding developers of any video game.
 
-## Base Features
+---
 
-- 💬 Interactive chat interface with AI
-- 🛠️ Built-in tool system with human-in-the-loop confirmation
-- 📅 Advanced task scheduling (one-time, delayed, and recurring via cron)
-- 🌓 Dark/Light theme support
-- ⚡️ Real-time streaming responses
-- 🔄 State management and chat history
-- 🎨 Modern, responsive UI
+## 🚀 Overview
 
-## GameAgent Features
+GameAgent combines **Cloudflare Workers**, **AI models (Gemini by default)**, and **Cloudflare Agents** to power an interactive chat interface with persistent state, custom tools, and real-time responses.
 
-- Provides the genres of a given video game
-- Give a summary of the game
-- Tells you who are the developers
+---
 
-## Prerequisites
+## 🧩 Features
 
-- Gemini or OpenAI API key
-- Cloudflare account (only for deployment)
+### 💬 Base Features (from Agents Starter)
+- **Interactive Chat UI** – Real-time AI messaging with tool confirmations  
+- **Human-in-the-loop Tools** – Tools that require user approval before execution  
+- **Task Scheduling** – Schedule, list, and cancel tasks (delayed, one-time, or recurring)  
+- **Persistent Memory** – Retains chat history and context  
+- **Dynamic Theming** – Light/Dark mode  
+- **Real-time Streaming** – Continuous text streaming for LLM responses  
 
-## Quick Start
+### 🎮 GameAgent Custom Tools
 
-1. Install dependencies:
+#### 🧠 `getGameGenres`
+> Returns the primary genres of a given video game.
+
+- Uses **Wikipedia’s public API** to fetch the summary and automatically detects common game genres (e.g., "action", "RPG", "shooter", etc.).
+- Example:  
+  **User:** “What are the genres of *Hades*?”  
+  **Agent:** “Hades belongs to the genres action, role-playing, and roguelike.”
+
+#### 📖 `summarizeGameStory`
+> Summarizes the story or plot of a given video game.
+
+- Fetches the Wikipedia summary of a video game and returns a short synopsis of its plot or story.  
+- Example:  
+  **User:** “Summarize the story of *Super Mario Odyssey*.”  
+  **Agent:** “Super Mario Odyssey is a platform game where Mario and his new ally Cappy journey across kingdoms to save Princess Peach from Bowser's forced marriage plans.”
+
+#### 🏢 `getDeveloperInfo`
+> Retrieves the developer or studio information for a video game.
+
+- Finds the game’s Wikipedia page and extracts the developer name using a regex that looks for phrases like “developed by …”.
+- Example:  
+  **User:** “Who developed *Minecraft*?”  
+  **Agent:** “Minecraft was developed by Mojang Studios.”
+
+---
+
+## 🧠 Architecture Components
+
+| Component | Description | Cloudflare Integration |
+|------------|-------------|------------------------|
+| **LLM** | Large Language Model used to power chat and reasoning | Gemini 2.0 |
+| **Workflow / Coordination** | Manages agent lifecycle, task scheduling, and workflow logic | Cloudflare **Workers** + **Agents runtime** |
+| **User Input** | Real-time chat interface for conversation or commands | Built with **Cloudflare Pages** and Realtime API |
+| **Memory / State** | Persistent conversation history and scheduled task storage | Backed by **Durable Objects** (via Agents framework) |
+
+---
+
+## ⚙️ Setup & Installation
+
+### 1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-2. Set up your environment:
+### 2. Set up your environment:
 
 Create a `.dev.vars` file:
 
@@ -49,13 +87,13 @@ or
 OPENAI_API_KEY=your_openai_api_key
 ```
 
-3. Run locally:
+### 3. Run locally:
 
 ```bash
 npm start
 ```
 
-4. Deploy:
+### 4. Deploy:
 
 ```bash
 npm run deploy

@@ -85,8 +85,9 @@ const cancelScheduledTask = tool({
 });
 
 /**
- * Tool to get the genres of a given video game using public data
- * This executes automatically (no confirmation required)
+ * Tool to get the genres of a given video game using public data.
+ * Automatically detects genre keywords from the game's Wikipedia summary.
+ * Executes automatically (no confirmation required).
  */
 const getGameGenres = tool({
   description: "Get the genres of a given video game using public Wikipedia data.",
@@ -167,6 +168,20 @@ const getGameGenres = tool({
         "fps",
         "tps",
         "metroidvania",
+        "roguelike",
+        "deckbuilder",
+        "retro",
+        "hero shooter",
+        "pvp",
+        "pve",
+        "sci-fi",
+        "crafting",
+        "farming",
+        "war",
+        "jrpg",
+        "party-based",
+        "creature colleting",
+        "mystery",
       ];
 
       const genres = genreKeywords.filter((g) => lower.includes(g));
@@ -186,6 +201,13 @@ const getGameGenres = tool({
   },
 });
 
+
+/**
+ * Tool to summarize the story or plot of a given video game.
+ * Searches for the game on Wikipedia and extracts the first two sentences
+ * from the page summary as a concise synopsis.
+ * Executes automatically (no confirmation required).
+ */
 const summarizeGameStory = tool({
   description: "Summarize the story or plot of a video game using Wikipedia.",
   inputSchema: z.object({
@@ -247,6 +269,11 @@ const summarizeGameStory = tool({
   },
 });
 
+/**
+ * Tool to get information about the developer or studio of a video game.
+ * Uses Wikipedia data and regex heuristics to extract the name of the developer.
+ * Executes automatically (no confirmation required).
+ */
 const getDeveloperInfo = tool({
   description: "Get information about the developer or studio of a video game using Wikipedia.",
   inputSchema: z.object({
@@ -330,3 +357,14 @@ export const tools = {
   cancelScheduledTask
 } satisfies ToolSet;
 
+/**
+ * Implementation of confirmation-required tools
+ * This object contains the actual logic for tools that need human approval
+ * Each function here corresponds to a tool above that doesn't have an execute function
+ */
+export const executions = {
+  getWeatherInformation: async ({ city }: { city: string }) => {
+    console.log(`Getting weather information for ${city}`);
+    return `The weather in ${city} is sunny`;
+  }
+};
