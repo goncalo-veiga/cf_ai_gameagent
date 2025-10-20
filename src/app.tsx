@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/correctness/useUniqueElementIds: it's alright */
-import { useEffect, useState, useRef, useCallback, use } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useAgent } from "agents/react";
 import { isToolUIPart } from "ai";
 import { useAgentChat } from "agents/ai-react";
@@ -135,7 +135,6 @@ export default function Chat() {
 
   return (
     <div className="h-[100vh] w-full p-4 flex justify-center items-center bg-fixed overflow-hidden">
-      <HasOpenAIKey />
       <div className="h-[calc(100vh-2rem)] w-full mx-auto max-w-lg flex flex-col shadow-xl rounded-md overflow-hidden relative border border-neutral-300 dark:border-neutral-800">
         <div className="px-4 py-3 border-b border-neutral-300 dark:border-neutral-800 flex items-center gap-3 sticky top-0 z-10">
           <div className="flex items-center justify-center h-8 w-8">
@@ -207,11 +206,15 @@ export default function Chat() {
                   <ul className="text-sm text-left space-y-2">
                     <li className="flex items-center gap-2">
                       <span className="text-[#F48120]">•</span>
-                      <span>Weather information for any city</span>
+                      <span>Genres of a video game</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="text-[#F48120]">•</span>
-                      <span>Local time in different locations</span>
+                      <span>Summary of a video game</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="text-[#F48120]">•</span>
+                      <span>Developers of a video game</span>
                     </li>
                   </ul>
                 </div>
@@ -414,9 +417,11 @@ export default function Chat() {
   );
 }
 
+/*
 const hasOpenAiKeyPromise = fetch("/check-open-ai-key").then((res) =>
   res.json<{ success: boolean }>()
 );
+
 
 function HasOpenAIKey() {
   const hasOpenAiKey = use(hasOpenAiKeyPromise);
@@ -487,3 +492,4 @@ function HasOpenAIKey() {
   }
   return null;
 }
+*/
