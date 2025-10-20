@@ -99,10 +99,6 @@ const getGameGenres = tool({
     console.log(`Fetching genres for game: ${name}`);
 
     try {
-      const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
-        name
-      )}&utf8=&format=json`;
-
       const searchRes = await fetch(
         `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
           name + " video game"
